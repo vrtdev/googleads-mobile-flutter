@@ -64,7 +64,8 @@ class AdError {
 class ResponseInfo {
   /// Constructs a [ResponseInfo] with the [responseId] and [mediationAdapterClassName].
   @protected
-  const ResponseInfo({this.responseId, this.mediationAdapterClassName, this.adapterResponses});
+  const ResponseInfo(
+      {this.responseId, this.mediationAdapterClassName, this.adapterResponses});
 
   /// An identifier for the loaded ad.
   final String? responseId;
@@ -129,7 +130,8 @@ class AdapterResponseInfo {
 class LoadAdError extends AdError {
   /// Default constructor for [LoadAdError].
   @protected
-  LoadAdError(int code, String domain, String message, this.responseInfo) : super(code, domain, message);
+  LoadAdError(int code, String domain, String message, this.responseInfo)
+      : super(code, domain, message);
 
   /// The [ResponseInfo] for the error.
   final ResponseInfo? responseInfo;
@@ -288,7 +290,8 @@ class AdManagerAdRequest extends AdRequest {
     return super == other &&
         other is AdManagerAdRequest &&
         mapEquals<String, String>(customTargeting, other.customTargeting) &&
-        customTargetingLists.toString() == other.customTargetingLists.toString() &&
+        customTargetingLists.toString() ==
+            other.customTargetingLists.toString() &&
         publisherProvidedId == other.publisherProvidedId;
   }
 }
@@ -436,7 +439,8 @@ class AdSize {
   /// The height will never be larger than 15% of the device's current orientation height and never smaller than 50px.
   /// This function always returns the same height for any width / device combination.
   /// For more details, visit: https://developers.google.com/android/reference/com/google/android/gms/ads/AdSize#getCurrentOrientationAnchoredAdaptiveBannerAdSize(android.content.Context,%20int)
-  static Future<AnchoredAdaptiveBannerAdSize?> getCurrentOrientationAnchoredAdaptiveBannerAdSize(int width) async {
+  static Future<AnchoredAdaptiveBannerAdSize?>
+      getCurrentOrientationAnchoredAdaptiveBannerAdSize(int width) async {
     final num? height = await instanceManager.channel.invokeMethod<num?>(
       'AdSize#getAnchoredAdaptiveBannerAdSize',
       <String, Object?>{
@@ -462,7 +466,8 @@ class AdSize {
   /// [AdManagerBannerAd.getPlatformAdSize] from the ad load callback.
   /// This ad size is most suitable for ads intended to be displayed inside
   /// scrollable content.
-  static InlineAdaptiveSize getCurrentOrientationInlineAdaptiveBannerAdSize(int width) {
+  static InlineAdaptiveSize getCurrentOrientationInlineAdaptiveBannerAdSize(
+      int width) {
     return InlineAdaptiveSize._(width: width);
   }
 
@@ -477,7 +482,8 @@ class AdSize {
   /// This ad size is most suitable for ads intended to be displayed inside
   /// scrollable content.
   static InlineAdaptiveSize getLandscapeInlineAdaptiveBannerAdSize(int width) {
-    return InlineAdaptiveSize._(width: width, orientation: Orientation.landscape);
+    return InlineAdaptiveSize._(
+        width: width, orientation: Orientation.landscape);
   }
 
   /// Gets an AdSize in portrait orientation with the given width and 0 height.
@@ -491,7 +497,8 @@ class AdSize {
   /// This ad size is most suitable for ads intended to be displayed inside
   /// scrollable content.
   static InlineAdaptiveSize getPortraitInlineAdaptiveBannerAdSize(int width) {
-    return InlineAdaptiveSize._(width: width, orientation: Orientation.portrait);
+    return InlineAdaptiveSize._(
+        width: width, orientation: Orientation.portrait);
   }
 
   /// Gets an AdSize with the given width and height that is always 0.
@@ -503,7 +510,8 @@ class AdSize {
   /// [AdManagerBannerAd.getPlatformAdSize] from the ad load callback.
   /// This ad size is most suitable for ads intended to be displayed inside
   /// scrollable content.
-  static InlineAdaptiveSize getInlineAdaptiveBannerAdSize(int width, int maxHeight) {
+  static InlineAdaptiveSize getInlineAdaptiveBannerAdSize(
+      int width, int maxHeight) {
     return InlineAdaptiveSize._(width: width, maxHeight: maxHeight);
   }
 
@@ -567,7 +575,8 @@ abstract class Ad {
 /// A valid [adUnitId] and [size] are required.
 abstract class AdWithView extends Ad {
   /// Default constructor, used by subclasses.
-  AdWithView({required String adUnitId, required this.listener}) : super(adUnitId: adUnitId);
+  AdWithView({required String adUnitId, required this.listener})
+      : super(adUnitId: adUnitId);
 
   /// The [AdWithViewListener] for the ad.
   final AdWithViewListener listener;
@@ -661,15 +670,19 @@ class _AdWidgetState extends State<AdWidget> {
     if (_adIdAlreadyMounted) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary('This AdWidget is already in the Widget tree'),
-        ErrorHint('If you placed this AdWidget in a list, make sure you create a new instance '
+        ErrorHint(
+            'If you placed this AdWidget in a list, make sure you create a new instance '
             'in the builder function with a unique ad object.'),
-        ErrorHint('Make sure you are not using the same ad object in more than one AdWidget.'),
+        ErrorHint(
+            'Make sure you are not using the same ad object in more than one AdWidget.'),
       ]);
     }
     if (_adLoadNotCalled) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('AdWidget requires Ad.load to be called before AdWidget is inserted into the tree'),
-        ErrorHint('Parameter ad is not loaded. Call Ad.load before AdWidget is inserted into the tree.'),
+        ErrorSummary(
+            'AdWidget requires Ad.load to be called before AdWidget is inserted into the tree'),
+        ErrorHint(
+            'Parameter ad is not loaded. Call Ad.load before AdWidget is inserted into the tree.'),
       ]);
     }
     final viewType = '${instanceManager.channel.name}/ad_widget';
@@ -677,10 +690,12 @@ class _AdWidgetState extends State<AdWidget> {
       return widget.useHybridComposition
           ? PlatformViewLink(
               viewType: viewType,
-              surfaceFactory: (BuildContext context, PlatformViewController controller) {
+              surfaceFactory:
+                  (BuildContext context, PlatformViewController controller) {
                 return AndroidViewSurface(
                   controller: controller as AndroidViewController,
-                  gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+                  gestureRecognizers: const <
+                      Factory<OneSequenceGestureRecognizer>>{},
                   hitTestBehavior: PlatformViewHitTestBehavior.opaque,
                 );
               },
@@ -692,7 +707,8 @@ class _AdWidgetState extends State<AdWidget> {
                   creationParams: instanceManager.adIdFor(widget.ad),
                   creationParamsCodec: StandardMessageCodec(),
                 )
-                  ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+                  ..addOnPlatformViewCreatedListener(
+                      params.onPlatformViewCreated)
                   ..create();
               },
             )
@@ -717,7 +733,8 @@ class _AdWidgetState extends State<AdWidget> {
 /// This widget adjusts its height based on the platform rendered ad.
 class FluidAdWidget extends StatefulWidget {
   /// Constructs a [FluidAdWidget].
-  const FluidAdWidget({Key? key, required this.ad, this.width}) : super(key: key);
+  const FluidAdWidget({Key? key, required this.ad, this.width})
+      : super(key: key);
 
   /// Ad to be displayed as a widget.
   final FluidAdManagerBannerAd ad;
@@ -762,15 +779,19 @@ class _FluidAdWidgetState extends State<FluidAdWidget> {
     if (_adIdAlreadyMounted) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary('This AdWidget is already in the Widget tree'),
-        ErrorHint('If you placed this AdWidget in a list, make sure you create a new instance '
+        ErrorHint(
+            'If you placed this AdWidget in a list, make sure you create a new instance '
             'in the builder function with a unique ad object.'),
-        ErrorHint('Make sure you are not using the same ad object in more than one AdWidget.'),
+        ErrorHint(
+            'Make sure you are not using the same ad object in more than one AdWidget.'),
       ]);
     }
     if (_adLoadNotCalled) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('AdWidget requires Ad.load to be called before AdWidget is inserted into the tree'),
-        ErrorHint('Parameter ad is not loaded. Call Ad.load before AdWidget is inserted into the tree.'),
+        ErrorSummary(
+            'AdWidget requires Ad.load to be called before AdWidget is inserted into the tree'),
+        ErrorHint(
+            'Parameter ad is not loaded. Call Ad.load before AdWidget is inserted into the tree.'),
       ]);
     }
 
@@ -785,7 +806,8 @@ class _FluidAdWidgetState extends State<FluidAdWidget> {
     if (defaultTargetPlatform == TargetPlatform.android) {
       platformView = PlatformViewLink(
         viewType: '${instanceManager.channel.name}/ad_widget',
-        surfaceFactory: (BuildContext context, PlatformViewController controller) {
+        surfaceFactory:
+            (BuildContext context, PlatformViewController controller) {
           return AndroidViewSurface(
             controller: controller as AndroidViewController,
             gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
@@ -855,9 +877,11 @@ class BannerAd extends AdWithView {
   /// Check out developer pages for [Admob](https://developers.google.com/admob/flutter/test-ads)
   /// and [AdManager](https://developers.google.com/ad-manager/mobile-ads-sdk/flutter/test-ads) for
   /// demo ad units that point to specific test creatives for each format.
-  @Deprecated('Use test ad unit ids from the developer page while creating the ad.')
-  static final String testAdUnitId =
-      Platform.isAndroid ? 'ca-app-pub-3940256099942544/6300978111' : 'ca-app-pub-3940256099942544/2934735716';
+  @Deprecated(
+      'Use test ad unit ids from the developer page while creating the ad.')
+  static final String testAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/6300978111'
+      : 'ca-app-pub-3940256099942544/2934735716';
 
   @override
   Future<void> load() async {
@@ -1030,9 +1054,11 @@ class NativeAd extends AdWithView {
   /// Check out developer pages for [Admob](https://developers.google.com/admob/flutter/test-ads)
   /// and [AdManager](https://developers.google.com/ad-manager/mobile-ads-sdk/flutter/test-ads) for
   /// demo ad units that point to specific test creatives for each format.
-  @Deprecated('Use test ad unit ids from the developer page while creating the ad.')
-  static final String testAdUnitId =
-      Platform.isAndroid ? 'ca-app-pub-3940256099942544/2247696110' : 'ca-app-pub-3940256099942544/3986624511';
+  @Deprecated(
+      'Use test ad unit ids from the developer page while creating the ad.')
+  static final String testAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/2247696110'
+      : 'ca-app-pub-3940256099942544/3986624511';
 
   @override
   Future<void> load() async {
@@ -1064,9 +1090,11 @@ class InterstitialAd extends AdWithoutView {
   /// Check out developer pages for [Admob](https://developers.google.com/admob/flutter/test-ads)
   /// and [AdManager](https://developers.google.com/ad-manager/mobile-ads-sdk/flutter/test-ads) for
   /// demo ad units that point to specific test creatives for each format.
-  @Deprecated('Use test ad unit ids from the developer page while creating the ad.')
-  static final String testAdUnitId =
-      Platform.isAndroid ? 'ca-app-pub-3940256099942544/1033173712' : 'ca-app-pub-3940256099942544/4411468910';
+  @Deprecated(
+      'Use test ad unit ids from the developer page while creating the ad.')
+  static final String testAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/4411468910';
 
   /// Loads an [InterstitialAd] with the given [adUnitId] and [request].
   static Future<void> load({
@@ -1074,7 +1102,8 @@ class InterstitialAd extends AdWithoutView {
     required AdRequest request,
     required InterstitialAdLoadCallback adLoadCallback,
   }) async {
-    InterstitialAd ad = InterstitialAd._(adUnitId: adUnitId, adLoadCallback: adLoadCallback, request: request);
+    InterstitialAd ad = InterstitialAd._(
+        adUnitId: adUnitId, adLoadCallback: adLoadCallback, request: request);
 
     await instanceManager.loadInterstitialAd(ad);
   }
@@ -1119,8 +1148,8 @@ class AdManagerInterstitialAd extends AdWithoutView {
     required AdManagerInterstitialAdLoadCallback adLoadCallback,
     AppEventListener? appEventListener,
   }) async {
-    AdManagerInterstitialAd ad =
-        AdManagerInterstitialAd._(adUnitId: adUnitId, adLoadCallback: adLoadCallback, request: request);
+    AdManagerInterstitialAd ad = AdManagerInterstitialAd._(
+        adUnitId: adUnitId, adLoadCallback: adLoadCallback, request: request);
 
     await instanceManager.loadAdManagerInterstitialAd(ad);
   }
@@ -1173,9 +1202,11 @@ class RewardedAd extends AdWithoutView {
   /// Check out developer pages for [Admob](https://developers.google.com/admob/flutter/test-ads)
   /// and [AdManager](https://developers.google.com/ad-manager/mobile-ads-sdk/flutter/test-ads) for
   /// demo ad units that point to specific test creatives for each format.
-  @Deprecated('Use test ad unit ids from the developer page while creating the ad.')
-  static final String testAdUnitId =
-      Platform.isAndroid ? 'ca-app-pub-3940256099942544/5224354917' : 'ca-app-pub-3940256099942544/1712485313';
+  @Deprecated(
+      'Use test ad unit ids from the developer page while creating the ad.')
+  static final String testAdUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/5224354917'
+      : 'ca-app-pub-3940256099942544/1712485313';
 
   /// Optional [ServerSideVerificationOptions].
   ServerSideVerificationOptions? serverSideVerificationOptions;
@@ -1283,7 +1314,8 @@ class RewardedInterstitialAd extends AdWithoutView {
   static Future<void> load({
     required String adUnitId,
     required AdRequest request,
-    required RewardedInterstitialAdLoadCallback rewardedInterstitialAdLoadCallback,
+    required RewardedInterstitialAdLoadCallback
+        rewardedInterstitialAdLoadCallback,
     ServerSideVerificationOptions? serverSideVerificationOptions,
   }) async {
     RewardedInterstitialAd rewardedInterstitialAd = RewardedInterstitialAd._(
@@ -1299,14 +1331,17 @@ class RewardedInterstitialAd extends AdWithoutView {
   static Future<void> loadWithAdManagerAdRequest({
     required String adUnitId,
     required AdManagerAdRequest adManagerRequest,
-    required RewardedInterstitialAdLoadCallback rewardedInterstitialAdLoadCallback,
+    required RewardedInterstitialAdLoadCallback
+        rewardedInterstitialAdLoadCallback,
     ServerSideVerificationOptions? serverSideVerificationOptions,
   }) async {
-    RewardedInterstitialAd rewardedInterstitialAd = RewardedInterstitialAd._fromAdManagerRequest(
-        adUnitId: adUnitId,
-        adManagerRequest: adManagerRequest,
-        rewardedInterstitialAdLoadCallback: rewardedInterstitialAdLoadCallback,
-        serverSideVerificationOptions: serverSideVerificationOptions);
+    RewardedInterstitialAd rewardedInterstitialAd =
+        RewardedInterstitialAd._fromAdManagerRequest(
+            adUnitId: adUnitId,
+            adManagerRequest: adManagerRequest,
+            rewardedInterstitialAdLoadCallback:
+                rewardedInterstitialAdLoadCallback,
+            serverSideVerificationOptions: serverSideVerificationOptions);
 
     await instanceManager.loadRewardedInterstitialAd(rewardedInterstitialAd);
   }
@@ -1355,7 +1390,9 @@ class ServerSideVerificationOptions {
 
   @override
   bool operator ==(other) {
-    return other is ServerSideVerificationOptions && userId == other.userId && customData == other.customData;
+    return other is ServerSideVerificationOptions &&
+        userId == other.userId &&
+        customData == other.customData;
   }
 }
 
